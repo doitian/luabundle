@@ -75,6 +75,9 @@ case "x$1" in
     luarocks path
     echo "export PATH=\"$(pwd)/rolls/bin:$PATH\""
     ;;
+  xupgrade)
+    git -C "$LUAROLL_LOCAL" pull
+    ;;
   x|xinstall)
     _install
     ;;
