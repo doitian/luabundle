@@ -16,7 +16,11 @@ skynet() {
   else
     git -C "$LUAROLL_SKYNET_ROOT" fetch --force
   fi
-  git -C "$LUAROLL_SKYNET_ROOT" checkout --force "origin/${1:-HEAD}"
+  if git -C "$LUAROLL_SKYNET_ROOT" show-ref "origin/${1:-HEAD}" &> /dev/null; then
+    git -C "$LUAROLL_SKYNET_ROOT" checkout --force "origin/${1:-HEAD}"
+  else
+    git -C "$LUAROLL_SKYNET_ROOT" checkout --force "$1"
+  fi
 }
 
 rock() {
@@ -55,7 +59,7 @@ _resolve_local() {
   cd "$(dirname "$bash_source")"
   cd ..
   LUAROLL_LOCAL="$(pwd)"
-  cd "$remeber_pwd"
+  cd "$remember_pwd"
 }
 
 _install() {
