@@ -1,0 +1,92 @@
+#!/bin/bash
+
+set -e
+[ -n "$DEBUG" ] && set -x
+
+LUABUNDLE_LOCAL=.
+LUABUNDLE_SKYNET_ROOT=skynet
+LUABUNDLE_SKYNET_REPO=git@gitlab.3pjgames.com:github/skynet.git
+LUABUNDLE_TREE=bundle
+LUABUNDLE_BUILD_SKYNET=
+
+skynet() {
+  LUABUNDLE_BUILD_SKYNET=1
+  if ! [ -d "$LUABUNDLE_SKYNET_ROOT" ]; then
+    git clone "$LUABUNDLE_SKYNET_REPO" "$LUABUNDLE_SKYNET_ROOT"
+  else
+    git -C "$LUABUNDLE_SKYNET_ROOT" fetch --force
+  fi
+  if git -C "$LUABUNDLE_SKYNET_ROOT" show-ref "origin/${1:-HEAD}" &> /dev/null; then
+    git -C "$LUABUNDLE_SKYNET_ROOT" checkout --force "origin/${1:-HEAD}"
+  else
+    git -C "$LUABUNDLE_SKYNET_ROOT" checkout --force "$1"
+  fi
+  # git -C "$LUABUNDLE_SKYNET_ROOT" submodule update --init --force --recursive
+}
+
+rock() {
+  local rock_module="$1"
+  local local_rock_spec="$LUABUNDLE_LOCAL/$rock_module"
+  mkdir -p "$LUABUNDLE_TREE"
+  if [ -f "$local_rock_spec" ]; then
+    shift
+    luarocks install "$local_rock_spec" "$@"
+  else
+    luarocks install "$@"
+  fi
+}
+
+_skynet_build() {
+  pushd "$LUABUNDLE_SKYNET_ROOT"
+  case "$(uname)" in
+    Linux)
+      make linux ;;
+    Darwin)
+      make macosx ;;
+    *)
+      echo "skynet is not supported in $(uname)"
+      exit 2
+      ;;
+  esac
+  popd
+}
+
+_resolve_local() {
+  local bash_source="$1"
+  local remember_pwd="$(pwd)"
+  if [ -L "$bash_source" ]; then
+    bash_source="$(readlink "$bash_source")"
+  fi
+  cd "$(dirname "$bash_source")"
+  cd ..
+  LUABUNDLE_LOCAL="$(pwd)"
+  cd "$remember_pwd"
+}
+
+_install() {
+  eval "$(cat Luafile)"
+
+  if [ -n "$LUABUNDLE_BUILD_SKYNET" ]; then
+    _skynet_build
+  fi
+}
+
+_resolve_local "$0"
+sed -e "s;\./bundle;$(pwd)/bundle;g" "$LUABUNDLE_LOCAL/config.lua" > .luabundle.lua
+export LUAROCKS_CONFIG="$(pwd)/.luabundle.lua"
+
+case "x$1" in
+  xpath)
+    luarocks path
+    echo "export PATH=\"$(pwd)/bundle/bin:$PATH\""
+    ;;
+  xupgrade)
+    git -C "$LUABUNDLE_LOCAL" pull
+    ;;
+  x|xinstall)
+    _install
+    ;;
+  *)
+    echo "luabundle [install|path|help]"
+    ;;
+esac
