@@ -21,10 +21,11 @@ rock inspect
 rock moonscript
 ```
 
-主要有两个命令
+主要有三个命令
 
 -   `skynet` 安装 skynet 到 `skynet` 目录下。参数用来指定 git 的分支或者标签。
 -   `rock` 就是调用 `luarocks` 安装 lua 模块。不过所有的 rocks 会安装到 `bundle` 目录下
+-   `rock_dev` 和 `rock` 一样，只是在运行 `luabundle prod` 的时候不会安装，可以用来安装开发和测试才需要的模块
 
 执行 `luabundle` 就会安装 Luafile 中指定的 skynet 和 rocks。
 

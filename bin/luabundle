@@ -3,6 +3,7 @@
 set -e
 [ -n "$DEBUG" ] && set -x
 
+LUABUNDLE_PROD=
 LUABUNDLE_LOCAL=.
 LUABUNDLE_SKYNET_ROOT=skynet
 LUABUNDLE_SKYNET_REPO=git@gitlab.3pjgames.com:github/skynet.git
@@ -33,6 +34,12 @@ rock() {
     luarocks install "$local_rock_spec" "$@"
   else
     luarocks install "$@"
+  fi
+}
+
+rock_dev() {
+  if [ -z "$LUABUNDLE_PROD" ]; then
+    rock "$@"
   fi
 }
 
@@ -84,6 +91,10 @@ case "x$1" in
     git -C "$LUABUNDLE_LOCAL" pull
     ;;
   x|xinstall)
+    _install
+    ;;
+  x|xprod)
+    LUABUNDLE_PROD=1
     _install
     ;;
   *)
