@@ -68,3 +68,11 @@ cpath = skynet.."cservice/?.so"
 lua_path = src.."lualib/?.lua;"..skynet.."lualib/?.lua;./bundle/share/lua/?.lua;./bundle/share/lua/?/init.lua"
 lua_cpath = skynet.."luaclib/?.so;./bundle/lib/lua/?.so"
 ```
+
+另外推荐将这些文件排除在代码仓库外，使用 git 就是添加到 .gitignore 中
+
+```
+/bundle
+/skynet
+/.luabundle.lua
+```
