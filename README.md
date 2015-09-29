@@ -6,7 +6,7 @@ Luabundle 是简单的 shell 脚本方便安装 skynet 和 luarocks 的模块。
 
 首先 clone 本仓库
 
-    git clone git@gitlab.3pjgames.com:xi/luabundle.git
+    git clone git@github.com:3pjgames/luabundle.git
 
 把本仓库的 bin 目录加到 PATH 里，或者建立符号链接
 
@@ -23,7 +23,7 @@ rock moonscript
 
 主要有三个命令
 
--   `skynet` 安装 skynet 到 `skynet` 目录下。参数用来指定 git 的分支或者标签。
+-   `skynet` 安装 skynet 到 `skynet` 目录下。参数用来指定 git 的分支或者标签。也可以传两个参数用来分别指定仓库地址和分支或标签名，比如 `skynet git@github.com:cloudwu/skynet.git HEAD`
 -   `rock` 就是调用 `luarocks` 安装 lua 模块。不过所有的 rocks 会安装到 `bundle` 目录下
 -   `rock_dev` 和 `rock` 一样，只是在运行 `luabundle prod` 的时候不会安装，可以用来安装开发和测试才需要的模块
 

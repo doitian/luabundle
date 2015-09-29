@@ -6,12 +6,16 @@ set -e
 LUABUNDLE_PROD=
 LUABUNDLE_LOCAL=.
 LUABUNDLE_SKYNET_ROOT=skynet
-LUABUNDLE_SKYNET_REPO=git@gitlab.3pjgames.com:github/skynet.git
+LUABUNDLE_SKYNET_REPO=git@github.com:cloudwu/skynet.git
 LUABUNDLE_TREE=bundle
-LUABUNDLE_BUILD_SKYNET=
 
 skynet() {
-  LUABUNDLE_BUILD_SKYNET=1
+  # allow `skynet git_repo sha`
+  if [ "$#" -gt 1 ]; then
+    LUABUNDLE_SKYNET_REPO="$1"
+    shift
+  fi
+
   if ! [ -d "$LUABUNDLE_SKYNET_ROOT" ]; then
     git clone "$LUABUNDLE_SKYNET_REPO" "$LUABUNDLE_SKYNET_ROOT"
   else
@@ -23,6 +27,8 @@ skynet() {
     git -C "$LUABUNDLE_SKYNET_ROOT" checkout --force "$1"
   fi
   # git -C "$LUABUNDLE_SKYNET_ROOT" submodule update --init --force --recursive
+
+  _skynet_build
 }
 
 rock() {
@@ -72,14 +78,16 @@ _resolve_local() {
 
 _install() {
   eval "$(cat Luafile)"
-
-  if [ -n "$LUABUNDLE_BUILD_SKYNET" ]; then
-    _skynet_build
-  fi
 }
 
 _resolve_local "$0"
-sed -e "s;\./bundle;$(pwd)/bundle;g" "$LUABUNDLE_LOCAL/config.lua" > .luabundle.lua
+if grep -q ^skynet Luafile; then
+  SKYNET_LUA_SED="s;\./skynet;$(pwd)/skynet;g"
+else
+  SKYNET_LUA_SED="/^variables/d"
+fi
+
+sed -e "s;\./bundle;$(pwd)/bundle;g" -e "$SKYNET_LUA_SED" "$LUABUNDLE_LOCAL/config.lua" > .luabundle.lua
 export LUAROCKS_CONFIG="$(pwd)/.luabundle.lua"
 
 case "x$1" in
