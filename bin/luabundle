@@ -94,6 +94,7 @@ case "x$1" in
   xpath)
     luarocks path
     echo "export PATH=\"$(pwd)/bundle/bin:$PATH\""
+    echo "export LUAROCKS_CONFIG=\"$LUAROCKS_CONFIG\""
     ;;
   xupgrade)
     git -C "$LUABUNDLE_LOCAL" pull
