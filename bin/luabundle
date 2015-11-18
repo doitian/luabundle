@@ -6,7 +6,7 @@ set -e
 LUABUNDLE_PROD=
 LUABUNDLE_LOCAL=.
 LUABUNDLE_SKYNET_ROOT=skynet
-LUABUNDLE_SKYNET_REPO=git@github.com:cloudwu/skynet.git
+LUABUNDLE_SKYNET_REPO=git://github.com/cloudwu/skynet.git
 LUABUNDLE_TREE=bundle
 LUABUNDLE_OS="$(uname)"
 
