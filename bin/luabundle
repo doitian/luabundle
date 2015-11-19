@@ -94,7 +94,7 @@ if [ "$LUABUNDLE_OS" = "Darwin" ]; then
 fi
 VAR_CFLAGS=""
 if [ "$LUABUNDLE_OS" = "Linux" ]; then
-  VAR_LIBFLAG="-O2 -fPIC"
+  VAR_CFLAGS="-O2 -fPIC"
 fi
 
 sed -e "s;{{LIBFLAG}};$VAR_LIBFLAG;" -e "s;{{CFLAGS}};$VAR_CFLAGS;" -e "s;\./bundle;$(pwd)/bundle;g" -e "$SKYNET_LUA_SED" "$LUABUNDLE_LOCAL/config.lua" > .luabundle.lua
