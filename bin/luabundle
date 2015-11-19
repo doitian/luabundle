@@ -92,8 +92,12 @@ VAR_LIBFLAG="-shared"
 if [ "$LUABUNDLE_OS" = "Darwin" ]; then
   VAR_LIBFLAG="-bundle -undefined dynamic_lookup -all_load"
 fi
+VAR_CFLAGS=""
+if [ "$LUABUNDLE_OS" = "Linux" ]; then
+  VAR_LIBFLAG="-O2 -fPIC"
+fi
 
-sed -e "s;{{LIBFLAG}};$VAR_LIBFLAG;" -e "s;\./bundle;$(pwd)/bundle;g" -e "$SKYNET_LUA_SED" "$LUABUNDLE_LOCAL/config.lua" > .luabundle.lua
+sed -e "s;{{LIBFLAG}};$VAR_LIBFLAG;" -e "s;{{CFLAGS}};$VAR_CFLAGS;" -e "s;\./bundle;$(pwd)/bundle;g" -e "$SKYNET_LUA_SED" "$LUABUNDLE_LOCAL/config.lua" > .luabundle.lua
 export LUAROCKS_CONFIG="$(pwd)/.luabundle.lua"
 
 case "x$1" in
